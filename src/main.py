@@ -47,27 +47,20 @@ partition_counts: Dict[int, int] = {}
 total_messages = 0
 is_running = False
 producer = None
+current_lag = 0  # Initialize current_lag
 
 async def broadcast_metrics():
     if active_connections:
         message = {
             "partitionCounts": partition_counts,
-            "totalMessages": total_messages
+            "totalMessages": total_messages,
+            "consumerLag": current_lag  # Add this
         }
         await asyncio.gather(
             *[connection.send_text(json.dumps(message)) 
               for connection in active_connections]
         )
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    active_connections.add(websocket)
-    try:
-        while True:
-            await websocket.receive_text()
-    except:
-        active_connections.remove(websocket)
 
 def create_kafka_config(use_smart_partitioner: bool = False) -> dict:
     config = {
