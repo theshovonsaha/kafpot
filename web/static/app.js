@@ -1,4 +1,3 @@
-// Get React hooks from global React object
 const { useState, useEffect, useRef } = React;
 
 const MetricCard = ({ icon, title, value }) => {
@@ -274,7 +273,7 @@ const KafkaAnalytics = () => {
               const chart = chartInstance.current;
               // Set correct color based on mode
               chart.data.datasets[0].borderColor =
-                activeMode === 'smart'
+                activeMode === 'normal'
                   ? 'rgb(34, 197, 94)'
                   : 'rgb(59, 130, 246)';
               chart.data.datasets[0].backgroundColor =
@@ -319,13 +318,11 @@ const KafkaAnalytics = () => {
     return () => clearInterval(interval);
   }, [isRunning, startTime]);
 
-  // Simplified sendCommand function - let backend handle the comparison timing
   const sendCommand = (command) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(command);
 
       if (command === 'compare') {
-        // Just reset state and let backend handle the rest
         setIsRunning(true);
         setStartTime(Date.now());
         setElapsedTime(0);
@@ -383,7 +380,6 @@ const KafkaAnalytics = () => {
     }
   };
 
-  // Render component using React.createElement
   return React.createElement(
     'div',
     { className: 'p-6 max-w-7xl mx-auto' },
@@ -562,7 +558,6 @@ const KafkaAnalytics = () => {
   );
 };
 
-// Render the app
 ReactDOM.render(
   React.createElement(KafkaAnalytics),
   document.getElementById('root')
